@@ -6,79 +6,32 @@ use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-       return view('category/index');
+    public function index() {
+    	$daftar_kategori = \App\Category::all();
+    	
+    	return view("category.index", ["daftar_kategori" => "$daftar_kategori"]);
     }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+    public function search(Request $request) {
+    	$keyword = $request->get("name");
+    	return \App\Category::where("name", "LIKE", "%$keyword%")->get();
     }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
+    public function delete($id) {
+    	$category = \App\Category::findOrFail($id);
+    	if (!$category->trashed()) {
+    		$category->delete();
+    		return "Kategori $category->name berhasil dihapus";
+    	}
     }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
+    public function restore($id) {
+    	$category = \App\Category::withTrashed()->findOrFail($id);
+    	if (!$category->trashed()) {
+    		return "Kategori tidak perlu direstore";
+    	}
+    	return "Kategori $category->name berhasil direstore";
     }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
+    public function permanentDelete($id) {
+    	$category = \App\Category::withTrashed()->findOrFail($id);
+		$category->forceDelete();
+		return "Kategori $category->name berhasil dihapus permanent. Tidak bisa direstore";
     }
 }

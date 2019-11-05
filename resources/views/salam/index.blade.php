@@ -4,7 +4,7 @@
     </head>
     <body>
 		<div>
-			Nama Kategori: {{$daftar_kategori[0]->name}}
+			{{$kalimat}}
 		</div>
     </body>
 </html>

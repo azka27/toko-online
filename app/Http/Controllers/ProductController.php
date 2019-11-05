@@ -25,4 +25,7 @@ class ProductController extends Controller
 	public function except(Request $request) {
 		$data = $request->except(['_token']);
 	}
+	public function index() {
+		return view("products.list", ["products" => \App\Product::simplePaginate(25)]);
+	}
 }
